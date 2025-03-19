@@ -15,6 +15,8 @@ public class TestLogout {
 
     private WebDriver driver;
 
+    private String authToken;
+
     @Before
     public void setUp() {
 
@@ -32,11 +34,10 @@ public class TestLogout {
         LoginPage objLoginPage = new LoginPage(driver);
         ProfilePage objProfilePage = new ProfilePage(driver);
         TestApiCreateUser testCreateUser = new TestApiCreateUser();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         //создание пользователя с помощью API
         Response response = testCreateUser.sendPostRequestWithUniqueData();
-        String authToken = response.jsonPath().getString("accessToken");
+        authToken = response.jsonPath().getString("accessToken");
 
         //проверка перехода на страницу авторизации по кнопке "Выйти" в личном кабинете
         objHomePage.openMainPage();
@@ -49,13 +50,14 @@ public class TestLogout {
         objProfilePage.clickOnExitButton();
 
         objLoginPage.getLoginButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @After
     public void tearDown() {
+        //удаление пользователя с помощью API
+        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
+        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
+
         driver.quit();
     }
 }

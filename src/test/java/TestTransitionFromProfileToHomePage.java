@@ -15,6 +15,8 @@ public class TestTransitionFromProfileToHomePage {
 
     private WebDriver driver;
 
+    private String authToken;
+
     @Before
     public void setUp() {
 
@@ -32,11 +34,10 @@ public class TestTransitionFromProfileToHomePage {
         LoginPage objLoginPage = new LoginPage(driver);
         ProfilePage objProfilePage = new ProfilePage(driver);
         TestApiCreateUser testCreateUser = new TestApiCreateUser();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         //создание пользователя с помощью API
         Response response = testCreateUser.sendPostRequestWithUniqueData();
-        String authToken = response.jsonPath().getString("accessToken");
+        authToken = response.jsonPath().getString("accessToken");
 
         //проверка перехода со страницы личного кабинета на главную страницу по кнопке "Конструктор"
         objHomePage.openMainPage();
@@ -49,9 +50,6 @@ public class TestTransitionFromProfileToHomePage {
         objProfilePage.clickOnConstructorButton();
 
         objHomePage.getPlaceAnOrderButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @Test
@@ -61,11 +59,10 @@ public class TestTransitionFromProfileToHomePage {
         LoginPage objLoginPage = new LoginPage(driver);
         ProfilePage objProfilePage = new ProfilePage(driver);
         TestApiCreateUser testCreateUser = new TestApiCreateUser();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         //создание пользователя с помощью API
         Response response = testCreateUser.sendPostRequestWithUniqueData();
-        String authToken = response.jsonPath().getString("accessToken");
+        authToken = response.jsonPath().getString("accessToken");
 
         //проверка перехода на главную страницу по логотипу Stellar Burgers
         objHomePage.openMainPage();
@@ -78,13 +75,14 @@ public class TestTransitionFromProfileToHomePage {
         objProfilePage.clickOnStellarBurgersLogo();
 
         objHomePage.getPlaceAnOrderButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @After
     public void tearDown() {
+        //удаление пользователя с помощью API
+        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
+        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
+
         driver.quit();
     }
 }

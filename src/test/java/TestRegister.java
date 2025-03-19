@@ -31,8 +31,6 @@ public class TestRegister {
         HomePage objHomePage = new HomePage(driver);
         LoginPage objLoginPage = new LoginPage(driver);
         RegisterPage objRegisterPage = new RegisterPage(driver);
-        TestApiAuthorization testAuthorization = new TestApiAuthorization();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         objHomePage.openMainPage();
         objHomePage.clickOnLoginToAccountButton();
@@ -44,15 +42,17 @@ public class TestRegister {
 
         //проверка, что пользователю открылась страница авторизации
         objLoginPage.getLoginButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        Response response = testAuthorization.sendPostRequestWithValidLogPass();
-        String authToken = response.jsonPath().getString("accessToken");
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @After
     public void tearDown() {
+        //удаление пользователя с помощью API
+        TestApiAuthorization testAuthorization = new TestApiAuthorization();
+        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
+        Response response = testAuthorization.sendPostRequestWithValidLogPass();
+        String authToken = response.jsonPath().getString("accessToken");
+        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
+
         driver.quit();
     }
 }

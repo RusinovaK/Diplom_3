@@ -7,28 +7,22 @@ import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
 import pageobject.HomePage;
 
-import java.util.concurrent.TimeUnit;
-
 @RunWith(Parameterized.class)
 public class TestParameterizedConstructorSection {
 
     private WebDriver driver;
 
     private String buttonName;
-    private String fElementName;
-    private String sElementName;
 
-    public TestParameterizedConstructorSection(String buttonName, String fElementName, String sElementName){
+    public TestParameterizedConstructorSection(String buttonName){
         this.buttonName = buttonName;
-        this.fElementName = fElementName;
-        this.sElementName = sElementName;
     }
 
     @Parameterized.Parameters
     public static Object[][] getData() {
         return new Object[][]{
-                {"Соусы", "Соус Spicy-X", "Соус фирменный Space Sauce"},
-                {"Начинки", "Мясо бессмертных моллюсков Protostomia", "Говяжий метеорит (отбивная)"}
+                {"Соусы"},
+                {"Начинки"}
         };
     }
 
@@ -36,8 +30,6 @@ public class TestParameterizedConstructorSection {
     public void setUp() {
 
         driver = WebDriverFactory.createWebDriver();
-
-        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
     }
 
     @Test
@@ -48,8 +40,8 @@ public class TestParameterizedConstructorSection {
         //проверка перехода к разделу «Соусы» / «Начинки» в разделе "Конструктор" на главной странице
         objHomePage.openMainPage();
         objHomePage.clickOnButtonInConstructorSection(buttonName);
-        objHomePage.getFirstElementTextAndCheck(fElementName);
-        objHomePage.getSecondElementTextAndCheck(sElementName);
+        objHomePage.waitForButtonInConstructorSectionToHaveClass(buttonName);
+        objHomePage.checkThatSelectedButtonInConstructorSectionHasCurrentClass(buttonName);
     }
 
     @After

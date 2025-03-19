@@ -3,8 +3,10 @@ package pageobject;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class HomePage {
     private WebDriver driver;
@@ -22,25 +24,13 @@ public class HomePage {
     private By placeAnOrderButton = By.xpath(".//div/button[text()='Оформить заказ']");
 
     //локатор кнопки "Соусы" / "Начинки" в разделе "Конструктор"
-    private String buttonInConstructorSection = ".//div/span[text()='%s']";
-
-    //локатор названия первого элемента в разделе "Соусы" / "Начинки"
-    private String fElementLocator = ".//ul/a/p[text()='%s']";
-
-    //локатор названия второго элемента в разделе "Соусы"/ "Начинки"
-    private String sElementLocator = ".//ul/a/p[text()='%s']";
+    private String buttonInConstructorSection = ".//div/span[text()='%s']/parent::div";
 
     //локатор кнопки "Булки" в разделе "Конструктор"
-    private By bunsButton = By.xpath(".//div/span[text()='Булки']");
+    private By bunsButton = By.xpath(".//div/span[text()='Булки']/parent::div");
 
     //локатор кнопки "Начинки" в разделе "Конструктор"
     private By fillingsButton = By.xpath(".//div/span[text()='Начинки']");
-
-    //локатор названия элемента "Флюоресцентная булка R2-D3" в разделе "Булки"
-    private By fluorescentBun = By.xpath(".//ul/a/p[text()='Флюоресцентная булка R2-D3']");
-
-    //локатор названия элемента "Краторная булка N-200i" в разделе "Булки"
-    private By kratornayaBun = By.xpath(".//ul/a/p[text()='Краторная булка N-200i']");
 
     public HomePage(WebDriver driver){
         this.driver = driver;
@@ -83,29 +73,30 @@ public class HomePage {
         assertEquals(actual, expected);
     }
 
-    @Step("Get first element text and check")
-    public void getFirstElementTextAndCheck(String fElementName){
-        String actual = driver.findElement(By.xpath(String.format(fElementLocator, fElementName))).getText();
-        assertEquals(actual, fElementName);
+    @Step("Сheck that selected Buns button has current class")
+    public void checkThatSelectedBunsButtonHasCurrentClass(){
+        String classNameToCheck = "tab_tab_type_current__2BEPc";
+        String classAttribute = driver.findElement(bunsButton).getAttribute("class");
+        assertTrue(classAttribute.contains(classNameToCheck));
     }
 
-    @Step("Get second element text and check")
-    public void getSecondElementTextAndCheck(String sElementName){
-        String actual = driver.findElement(By.xpath(String.format(sElementLocator, sElementName))).getText();
-        assertEquals(actual, sElementName);
+    @Step("Сheck that selected button in constructor section has current class")
+    public void checkThatSelectedButtonInConstructorSectionHasCurrentClass(String buttonName){
+        String classNameToCheck = "tab_tab_type_current__2BEPc";
+        String classAttribute = driver.findElement(By.xpath(String.format(buttonInConstructorSection, buttonName))).getAttribute("class");
+        assertTrue(classAttribute.contains(classNameToCheck));
     }
 
-    @Step("Get Fluorescent bun text and check")
-    public void getFluorescentBunTextAndCheck(){
-        String expected = "Флюоресцентная булка R2-D3";
-        String actual = driver.findElement(fluorescentBun).getText();
-        assertEquals(actual, expected);
+    @Step("Wait for buns button to have class")
+    public void waitForBunsButtonToHaveClass(){
+        new WebDriverWait(driver, 10)
+                .until(driver -> driver.findElement(bunsButton).getAttribute("class").contains("tab_tab_type_current__2BEPc"));
     }
 
-    @Step("Get Kratornaya bun text and check")
-    public void getKratornayaBunTextAndCheck(){
-        String expected = "Краторная булка N-200i";
-        String actual = driver.findElement(kratornayaBun).getText();
-        assertEquals(actual, expected);
+    @Step("Wait for button in constructor section to have class")
+    public void waitForButtonInConstructorSectionToHaveClass(String buttonName){
+        new WebDriverWait(driver, 10)
+                .until(driver -> driver.findElement(By.xpath(String.format(buttonInConstructorSection, buttonName))).getAttribute("class").contains("tab_tab_type_current__2BEPc"));
     }
+
 }

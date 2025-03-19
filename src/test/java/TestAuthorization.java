@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestAuthorization {
     private WebDriver driver;
+    private String authToken;
 
     @Before
     public void setUp() {
@@ -31,11 +32,10 @@ public class TestAuthorization {
         HomePage objHomePage = new HomePage(driver);
         LoginPage objLoginPage = new LoginPage(driver);
         TestApiCreateUser testCreateUser = new TestApiCreateUser();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         //создание пользователя с помощью API
         Response response = testCreateUser.sendPostRequestWithUniqueData();
-        String authToken = response.jsonPath().getString("accessToken");
+        authToken = response.jsonPath().getString("accessToken");
 
         //проверка авторизации по кнопке "Войти в аккаунт" на главной странице
         objHomePage.openMainPage();
@@ -44,9 +44,6 @@ public class TestAuthorization {
         objLoginPage.fillOutAuthorizationForm();
 
         objHomePage.getPlaceAnOrderButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @Test
@@ -55,11 +52,10 @@ public class TestAuthorization {
         HomePage objHomePage = new HomePage(driver);
         LoginPage objLoginPage = new LoginPage(driver);
         TestApiCreateUser testCreateUser = new TestApiCreateUser();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         //создание пользователя с помощью API
         Response response = testCreateUser.sendPostRequestWithUniqueData();
-        String authToken = response.jsonPath().getString("accessToken");
+        authToken = response.jsonPath().getString("accessToken");
 
         //проверка авторизации по кнопке "Личный кабинет"
         objHomePage.openMainPage();
@@ -68,9 +64,6 @@ public class TestAuthorization {
         objLoginPage.fillOutAuthorizationForm();
 
         objHomePage.getPlaceAnOrderButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @Test
@@ -80,11 +73,10 @@ public class TestAuthorization {
         LoginPage objLoginPage = new LoginPage(driver);
         RegisterPage objRegisterPage = new RegisterPage(driver);
         TestApiCreateUser testCreateUser = new TestApiCreateUser();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         //создание пользователя с помощью API
         Response response = testCreateUser.sendPostRequestWithUniqueData();
-        String authToken = response.jsonPath().getString("accessToken");
+        authToken = response.jsonPath().getString("accessToken");
 
         //проверка авторизации по кнопке "Войти" на странице регистрации
         objHomePage.openMainPage();
@@ -97,9 +89,6 @@ public class TestAuthorization {
         objLoginPage.fillOutAuthorizationForm();
 
         objHomePage.getPlaceAnOrderButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @Test
@@ -109,11 +98,10 @@ public class TestAuthorization {
         LoginPage objLoginPage = new LoginPage(driver);
         ForgotPasswordPage objForgotPasswordPage = new ForgotPasswordPage(driver);
         TestApiCreateUser testCreateUser = new TestApiCreateUser();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         //создание пользователя с помощью API
         Response response = testCreateUser.sendPostRequestWithUniqueData();
-        String authToken = response.jsonPath().getString("accessToken");
+        authToken = response.jsonPath().getString("accessToken");
 
         //проверка авторизации по кнопке "Войти" на странице восстановления пароля
         objHomePage.openMainPage();
@@ -126,13 +114,14 @@ public class TestAuthorization {
         objLoginPage.fillOutAuthorizationForm();
 
         objHomePage.getPlaceAnOrderButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @After
     public void tearDown() {
+        //удаление пользователя с помощью API
+        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
+        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
+
         driver.quit();
     }
 }

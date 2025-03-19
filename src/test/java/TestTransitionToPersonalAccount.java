@@ -15,6 +15,8 @@ public class TestTransitionToPersonalAccount {
 
     private WebDriver driver;
 
+    private String authToken;
+
     @Before
     public void setUp() {
 
@@ -32,11 +34,10 @@ public class TestTransitionToPersonalAccount {
         LoginPage objLoginPage = new LoginPage(driver);
         ProfilePage objProfilePage = new ProfilePage(driver);
         TestApiCreateUser testCreateUser = new TestApiCreateUser();
-        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
 
         //создание пользователя с помощью API
         Response response = testCreateUser.sendPostRequestWithUniqueData();
-        String authToken = response.jsonPath().getString("accessToken");
+        authToken = response.jsonPath().getString("accessToken");
 
         //проверка перехода в личный кабинет с авторизацией
         objHomePage.openMainPage();
@@ -47,13 +48,14 @@ public class TestTransitionToPersonalAccount {
         objHomePage.clickOnPersonalAccountButton();
 
         objProfilePage.getProfileButtonTextAndCheck();
-
-        //удаление пользователя с помощью API
-        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
     }
 
     @After
     public void tearDown() {
+        //удаление пользователя с помощью API
+        TestApiDeleteUser testDeleteUser = new TestApiDeleteUser();
+        testDeleteUser.sendDeleteRequestWithValidToken(authToken);
+
         driver.quit();
     }
 }
